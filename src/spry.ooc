@@ -15,13 +15,19 @@ IRC: class {
 
     connect: func {
         socket connect()
+        writer write("NICK " + nick + "\r\n" +
+                     "USER " + user + " * * :" + realname + "\r\n")
+//        writer write("JOIN #ooc-lang\r\n" +
+//                     "PRIVMSG #ooc-lang :It's ALIVE!!\r\n")
         recieveLoop()
     }
 
     recieveLoop: func {
-        while(reader hasNext()) {
-            line := reader readLine()
-            line println()
+        while(true) {
+            if(reader hasNext()) {
+                line := reader readLine()
+                line println()
+            }
         }
         socket close()
     }
