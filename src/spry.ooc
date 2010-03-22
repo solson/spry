@@ -9,6 +9,8 @@ IRC: class {
 
     init: func (=nick, =user, =realname, =server, =port) {
         socket = StreamSocket new(server, port)
+        reader = socket reader()
+        writer = socket writer()
     }
 
     connect: func {
