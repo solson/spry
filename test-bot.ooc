@@ -13,6 +13,15 @@ TestBot: class extends IRC {
         send(Join new("#spry,#ooc-lang"))
     }
 
+    onSend: func (cmd: Command) {
+        ">> " print()
+        cmd toString() println()
+    }
+
+    onAll: func (cmd: Command) {
+        cmd toString() println()
+    }
+
     onNick: func (cmd: Nick) {
         "%s is now known as %s" format(cmd prefix, cmd nick()) println()
     }
@@ -20,7 +29,6 @@ TestBot: class extends IRC {
     onChannelMessage: func (cmd: Message) {
         match(cmd message()) {
             case "!ping" =>
-                reply(cmd, )
                 send(Message new(cmd channel(), "%s: pong" format(cmd prefix nick)))
         }
     }

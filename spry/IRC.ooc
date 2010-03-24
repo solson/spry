@@ -31,8 +31,8 @@ IRC: class {
     }
 
     handleLine: func (line: String) {
-        line println()
         cmd := Command new(line)
+        onAll(cmd)
         match(cmd command) {
             case "PING" =>
                 onPing(Ping new(cmd))
@@ -55,10 +55,8 @@ IRC: class {
     }
 
     send: func (cmd: Command) {
-        line := cmd prepare()
-        ">> " print()
-        line println()
-        writer write(line + "\r\n")
+        onSend(cmd)
+        writer write(cmd toString() + "\r\n")
     }
 
     // Callbacks
@@ -66,6 +64,10 @@ IRC: class {
         send(Nick new(nick))
         send(User new(user, realname))
     }
+
+    onSend: func (cmd: Command) {}
+
+    onAll: func (cmd: Command) {}
 
     onPing: func (cmd: Ping) {
         send(Pong new(cmd server()))

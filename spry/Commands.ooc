@@ -56,14 +56,6 @@ Command: class {
             b append(':') .append(prefix full) .append(' ')
         }
 
-        b append(prepare())
-
-        return b toString()
-    }
-
-    prepare: func -> String {
-        b := Buffer new()
-
         b append(command)
 
         last := params lastIndex()
