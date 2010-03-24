@@ -26,10 +26,10 @@ TestBot: class extends IRC {
         "%s is now known as %s" format(cmd prefix, cmd nick()) println()
     }
 
-    onJoin: func (cmd: Join) {
-        if(cmd prefix nick != this nick)
-            cmd respond("Welcome to %s, %s!" format(cmd channel(), cmd prefix nick))
-    }
+//    onJoin: func (cmd: Join) {
+//        if(cmd prefix nick != this nick)
+//            cmd respond("Welcome to %s, %s!" format(cmd channel(), cmd prefix nick))
+//    }
 
     onChannelMessage: func (cmd: Message) {
         handleCommand(cmd)
