@@ -76,20 +76,6 @@ Command: class {
     }
 }
 
-ChannelCommand: class extends Command {
-    init: func ~ChannelCommand (=irc, =command, =prefix, =params) {}
-
-    channel: func -> String { null }
-
-    respond: func (msg: String) {
-        if(this channel() startsWith('#')) {
-            Message new(irc, this channel(), msg) send()
-        } else {
-            Message new(irc, this prefix nick, msg) send()
-        }
-    }
-}
-
 Nick: class extends Command {
     init: func ~Nick (.irc, nick: String) {
         params := [nick] as ArrayList<String>
@@ -130,7 +116,7 @@ User: class extends Command {
     }
 }
 
-Join: class extends ChannelCommand {
+Join: class extends Command {
     init: func ~Join (.irc, channel: String) {
         params := [channel] as ArrayList<String>
         super(irc, "JOIN", null, params)
@@ -153,7 +139,7 @@ Join: class extends ChannelCommand {
     }
 }
 
-Message: class extends ChannelCommand {
+Message: class extends Command {
     init: func ~Privmsg (.irc, reciever, message: String) {
         params := [reciever, message] as ArrayList<String>
         super(irc, "PRIVMSG", null, params)

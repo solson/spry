@@ -1,4 +1,4 @@
-import net/StreamSocket, structs/ArrayList, text/StringTokenizer
+import net/StreamSocket
 import spry/[IRC, Commands, Prefix]
 
 TestBot: class extends IRC {
@@ -28,7 +28,7 @@ TestBot: class extends IRC {
 
 //    onJoin: func (cmd: Join) {
 //        if(cmd prefix nick != this nick)
-//            cmd respond("Welcome to %s, %s!" format(cmd channel(), cmd prefix nick))
+//            say("Welcome to %s, %s!" format(cmd channel(), cmd prefix nick))
 //    }
 
     onChannelMessage: func (cmd: Message) {
@@ -39,17 +39,19 @@ TestBot: class extends IRC {
         handleCommand(cmd)
     }
 
-    handleCommand: func (cmd: Message) {
-        msg := cmd message()
-        if(!msg startsWith('!')) return
+    handleCommand: func (msg: Message) {
+        msgStr := msg message()
+        if(!msgStr startsWith('!')) return
 
-        msgParts := msg[1..-1] split(' ', 1) toArrayList()
+        i := msgStr indexOf(' ')
+        cmd := msgStr[1..i]
+        rest := msgStr[(i + 1)..-1]
 
-        match(msgParts[0]) {
+        match(cmd) {
             case "ping" =>
-                cmd respond(cmd prefix nick + ": pong")
+                say(msg prefix nick + ": pong")
             case "echo" =>
-                cmd respond("%s: %s" format(cmd prefix nick, msgParts[1]))
+                say("%s: %s" format(msg prefix nick, rest))
         }
     }
 }

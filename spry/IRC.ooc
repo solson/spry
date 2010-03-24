@@ -8,10 +8,15 @@ IRC: class {
     reader: StreamSocketReader
     writer: StreamSocketWriter
 
+    // Set whenever a channel command or private message is recieved (Message,
+    // Join, Part, Notice, etc). Can be a nick or a channel.
+    sayTo: String
+
     init: func (=nick, =user, =realname, =server, =port) {
         socket = StreamSocket new(server, port)
         reader = socket reader()
         writer = socket writer()
+        sayTo = null
     }
 
     connect: func {
@@ -31,6 +36,7 @@ IRC: class {
     }
 
     handleLine: func (line: String) {
+        sayTo = null
         cmd := Command new(this, line)
         onAll(cmd)
         match(cmd command) {
@@ -43,12 +49,16 @@ IRC: class {
             case "PRIVMSG" =>
                 msg := Message new(cmd)
                 if(msg reciever() startsWith('#')) {
+                    sayTo = msg channel()
                     onChannelMessage(msg)
                 } else {
+                    sayTo = msg prefix nick
                     onPrivateMessage(msg)
                 }
             case "JOIN" =>
-                onJoin(Join new(cmd))
+                joinCmd := Join new(cmd)
+                sayTo = joinCmd channel()
+                onJoin(joinCmd)
             case =>
                 onUnhandled(cmd)
         }
@@ -57,6 +67,13 @@ IRC: class {
     send: func (cmd: Command) {
         onSend(cmd)
         writer write(cmd toString() + "\r\n")
+    }
+
+    say: func (msg: String) {
+        if(!sayTo) {
+            Exception new(This, "Called say and sayTo was null. (Probably wasn't a private message/notice or channel command.)") throw()
+        }
+        Message new(this, sayTo, msg) send()
     }
 
     // Callbacks
