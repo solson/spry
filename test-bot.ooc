@@ -10,7 +10,7 @@ TestBot: class extends IRC {
 
     onConnect: func {
         super onConnect()
-        send(Join new("#spry"))
+        send(Join new("#spry,#ooc-lang"))
     }
 
     onNick: func (cmd: Nick) {
@@ -18,11 +18,16 @@ TestBot: class extends IRC {
     }
 
     onChannelMessage: func (cmd: Message) {
-        send(Message new(cmd reciever(), "Omg, %s! I can hear you!" format(cmd prefix nick)))
+        match(cmd message()) {
+            case "!ping" =>
+                reply(cmd, )
+                send(Message new(cmd channel(), "%s: pong" format(cmd prefix nick)))
+        }
     }
 
     onJoin: func (cmd: Join) {
-        send(Message new(cmd channel(), "Welcome to %s, %s!" format(cmd channel(), cmd prefix nick)))
+        if(cmd prefix nick != this nick)
+            send(Message new(cmd channel(), "Welcome to %s, %s!" format(cmd channel(), cmd prefix nick)))
     }
 }
 

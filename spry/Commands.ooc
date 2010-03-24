@@ -154,6 +154,10 @@ Message: class extends Command {
         params[0]
     }
 
+    channel: func -> String {
+        params[0]
+    }
+
     message: func -> String {
         params[1]
     }
