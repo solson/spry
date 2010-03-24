@@ -31,7 +31,7 @@ IRC: class {
     }
 
     handleLine: func (line: String) {
-        cmd := Command new(line)
+        cmd := Command new(this, line)
         onAll(cmd)
         match(cmd command) {
             case "PING" =>
@@ -59,18 +59,10 @@ IRC: class {
         writer write(cmd toString() + "\r\n")
     }
 
-    respond: func (cmd: ChannelCommand, msg: String) {
-        if(cmd channel() startsWith('#')) {
-            send(Message new(cmd channel(), msg))
-        } else {
-            send(Message new(cmd prefix nick, msg))
-        }
-    }
-
     // Callbacks
     onConnect: func {
-        send(Nick new(nick))
-        send(User new(user, realname))
+        Nick new(this, nick) send()
+        User new(this, user, realname) send()
     }
 
     onSend: func (cmd: Command) {}
@@ -78,7 +70,7 @@ IRC: class {
     onAll: func (cmd: Command) {}
 
     onPing: func (cmd: Ping) {
-        send(Pong new(cmd server()))
+        Pong new(this, cmd server()) send()
     }
 
     onPong: func (cmd: Pong) {}
