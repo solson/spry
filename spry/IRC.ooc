@@ -1,4 +1,5 @@
 import net/StreamSocket
+import Commands, Prefix
 
 IRC: class {
     nick, user, realname, server: String
@@ -15,20 +16,70 @@ IRC: class {
 
     connect: func {
         socket connect()
-        writer write("NICK " + nick + "\r\n" +
-                     "USER " + user + " * * :" + realname + "\r\n")
-//        writer write("JOIN #ooc-lang\r\n" +
-//                     "PRIVMSG #ooc-lang :It's ALIVE!!\r\n")
-        recieveLoop()
+        onConnect()
     }
 
-    recieveLoop: func {
+    run: func {
+        connect()
         while(true) {
             if(reader hasNext()) {
                 line := reader readLine()
-                line println()
+                handleLine(line)
             }
         }
         socket close()
     }
+
+    handleLine: func (line: String) {
+        line println()
+        cmd := Command new(line)
+        match(cmd command) {
+            case "PING" =>
+                onPing(Ping new(cmd))
+            case "PONG" =>
+                onPong(Pong new(cmd))
+            case "NICK" =>
+                onNick(Nick new(cmd))
+            case "PRIVMSG" =>
+                msg := Message new(cmd)
+                if(msg reciever() startsWith('#')) {
+                    onChannelMessage(msg)
+                } else {
+                    onPrivateMessage(msg)
+                }
+            case "JOIN" =>
+                onJoin(Join new(cmd))
+            case =>
+                onUnhandled(cmd)
+        }
+    }
+
+    send: func (cmd: Command) {
+        line := cmd prepare()
+        ">> " print()
+        line println()
+        writer write(line + "\r\n")
+    }
+
+    // Callbacks
+    onConnect: func {
+        send(Nick new(nick))
+        send(User new(user, realname))
+    }
+
+    onPing: func (cmd: Ping) {
+        send(Pong new(cmd server()))
+    }
+
+    onPong: func (cmd: Pong) {}
+
+    onNick: func (cmd: Nick) {}
+
+    onChannelMessage: func (cmd: Message) {}
+
+    onPrivateMessage: func (cmd: Message) {}
+
+    onJoin: func (cmd: Join) {}
+
+    onUnhandled: func (cmd: Command) {}
 }
