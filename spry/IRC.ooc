@@ -59,6 +59,14 @@ IRC: class {
         writer write(cmd toString() + "\r\n")
     }
 
+    respond: func (cmd: ChannelCommand, msg: String) {
+        if(cmd channel() startsWith('#')) {
+            send(Message new(cmd channel(), msg))
+        } else {
+            send(Message new(cmd prefix nick, msg))
+        }
+    }
+
     // Callbacks
     onConnect: func {
         send(Nick new(nick))

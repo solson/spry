@@ -29,13 +29,13 @@ TestBot: class extends IRC {
     onChannelMessage: func (cmd: Message) {
         match(cmd message()) {
             case "!ping" =>
-                send(Message new(cmd channel(), "%s: pong" format(cmd prefix nick)))
+                respond(cmd, cmd prefix nick + ": pong")
         }
     }
 
     onJoin: func (cmd: Join) {
         if(cmd prefix nick != this nick)
-            send(Message new(cmd channel(), "Welcome to %s, %s!" format(cmd channel(), cmd prefix nick)))
+            respond(cmd, "Welcome to %s, %s!" format(cmd channel(), cmd prefix nick))
     }
 }
 

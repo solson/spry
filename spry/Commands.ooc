@@ -70,6 +70,12 @@ Command: class {
     }
 }
 
+ChannelCommand: class extends Command {
+    init: func ~ChannelCommand (=command, =prefix, =params) {}
+
+    channel: func -> String { null }
+}
+
 Nick: class extends Command {
     init: func ~Nick (nick: String) {
         params := [nick] as ArrayList<String>
@@ -108,7 +114,7 @@ User: class extends Command {
     }
 }
 
-Join: class extends Command {
+Join: class extends ChannelCommand {
     init: func ~Join (channel: String) {
         params := [channel] as ArrayList<String>
         super("JOIN", null, params)
@@ -130,7 +136,7 @@ Join: class extends Command {
     }
 }
 
-Message: class extends Command {
+Message: class extends ChannelCommand {
     init: func ~Privmsg (reciever, message: String) {
         params := [reciever, message] as ArrayList<String>
         super("PRIVMSG", null, params)
