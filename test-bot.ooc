@@ -45,13 +45,15 @@ TestBot: class extends IRC {
 
         i := msgStr indexOf(' ')
         cmd := msgStr[1..i]
-        rest := msgStr[(i + 1)..-1]
+
+        if(i != -1) i += 1
+        rest := msgStr[i..-1]
 
         match(cmd) {
             case "ping" =>
-                say(msg prefix nick + ": pong")
+                reply("pong")
             case "echo" =>
-                say("%s: %s" format(msg prefix nick, rest))
+                reply(rest)
         }
     }
 }

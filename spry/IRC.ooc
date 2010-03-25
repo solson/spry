@@ -12,6 +12,9 @@ IRC: class {
     // Join, Part, Notice, etc). Can be a nick or a channel.
     sayTo: String
 
+    // Set whenever a command performed by another user is recived
+    senderPrefix: Prefix
+
     init: func (=nick, =user, =realname, =server, =port) {
         socket = StreamSocket new(server, port)
         reader = socket reader()
@@ -36,8 +39,13 @@ IRC: class {
     }
 
     handleLine: func (line: String) {
-        sayTo = null
+        this sayTo = null
+
         cmd := Command new(this, line)
+        if(cmd prefix) {
+            this senderPrefix = cmd prefix
+        }
+
         onAll(cmd)
         match(cmd command) {
             case "PING" =>
@@ -49,10 +57,10 @@ IRC: class {
             case "PRIVMSG" =>
                 msg := Message new(cmd)
                 if(msg reciever() startsWith('#')) {
-                    sayTo = msg channel()
+                    this sayTo = msg channel()
                     onChannelMessage(msg)
                 } else {
-                    sayTo = msg prefix nick
+                    this sayTo = msg prefix nick
                     onPrivateMessage(msg)
                 }
             case "JOIN" =>
@@ -70,10 +78,27 @@ IRC: class {
     }
 
     say: func (msg: String) {
-        if(!sayTo) {
+        if(!this sayTo) {
             Exception new(This, "Called say and sayTo was null. (Probably wasn't a private message/notice or channel command.)") throw()
         }
-        Message new(this, sayTo, msg) send()
+
+        say(this sayTo, msg)
+    }
+
+    say: func ~to (to, msg: String) {
+        Message new(this, to, msg) send()
+    }
+
+    reply: func (msg: String) {
+        if(!this senderPrefix) {
+            Exception new(This, "Called reply and senderPrefix was null. (The command didn't have a prefix.)") throw()
+        }
+
+        if(this sayTo && this sayTo startsWith('#')) {
+            say("%s: %s" format(this senderPrefix nick, msg))
+        } else {
+            say(msg)
+        }
     }
 
     // Callbacks
