@@ -8,6 +8,9 @@ IRC: class {
     reader: StreamSocketReader
     writer: StreamSocketWriter
 
+    // A string to use at the beginning of commands ("!", as in !ping, !echo)
+    trigger: String
+
     // Set whenever a channel command or private message is recieved (Message,
     // Join, Part, Notice, etc). Can be a nick or a channel.
     sayTo: String
@@ -15,12 +18,20 @@ IRC: class {
     // Set whenever a command performed by another user is recived
     senderPrefix: Prefix
 
-    init: func (=nick, =user, =realname, =server, =port) {
+    // Set when a message matches the trigger or the bot nick
+    addressed: Bool
+
+    // Set when the bot is `addressed` to the string after the trigger/nickname
+    commandString: String
+
+    init: func (=nick, =user, =realname, =server, =port, =trigger) {
         socket = StreamSocket new(server, port)
         reader = socket reader()
         writer = socket writer()
         sayTo = null
         senderPrefix = null
+        addressed = false
+        commandString = false
     }
 
     connect: func {
@@ -57,7 +68,8 @@ IRC: class {
                 onNick(Nick new(cmd))
             case "PRIVMSG" =>
                 msg := Message new(cmd)
-                if(msg reciever() startsWith('#')) {
+                checkAddressed(msg)
+                if(msg inChannel()) {
                     this sayTo = msg channel()
                     onChannelMessage(msg)
                 } else {
@@ -70,6 +82,28 @@ IRC: class {
                 onJoin(joinCmd)
             case =>
                 onUnhandled(cmd)
+        }
+    }
+
+    checkAddressed: func (msg: Message) {
+        addressed = false
+        commandString = null
+        msgStr := msg message()
+        if(msg inChannel()) {
+            if(this trigger && msgStr startsWith(this trigger)) {
+                addressed = true
+                commandString = msgStr substring(this trigger length())
+            } else if(msgStr startsWith(this nick + ": ")) {
+                addressed = true
+                commandString = msgStr substring(this nick length() + 2)
+            }
+        } else {
+            addressed = true
+            if(this trigger && msgStr startsWith(this trigger)) {
+                commandString = msgStr substring(this trigger length())
+            } else {
+                commandString = msgStr clone()
+            }
         }
     }
 

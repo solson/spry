@@ -2,10 +2,14 @@ import net/StreamSocket
 import spry/[IRC, Commands, Prefix]
 
 TestBot: class extends IRC {
-    init: func ~TestBot (=nick, =user, =realname, =server, =port) {
+    init: func ~TestBot (=nick, =user, =realname, =server, =port, =trigger) {
         socket = StreamSocket new(server, port)
         reader = socket reader()
         writer = socket writer()
+        sayTo = null
+        senderPrefix = null
+        addressed = false
+        commandString = false
     }
 
     onConnect: func {
@@ -40,25 +44,31 @@ TestBot: class extends IRC {
     }
 
     handleCommand: func (msg: Message) {
-        msgStr := msg message()
-        if(!msgStr startsWith('!')) return
+        if(!addressed) return
 
-        i := msgStr indexOf(' ')
-        cmd := msgStr[1..i]
+        i := commandString indexOf(' ')
+        cmd := commandString[0..i]
 
         if(i != -1) i += 1
-        rest := msgStr[i..-1]
+        rest := commandString[i..-1]
 
         match(cmd) {
             case "ping" =>
                 reply("pong")
             case "echo" =>
                 reply(rest)
+            case "trigger" =>
+                trigger = rest
+                reply("Done.")
+            case "help" =>
+                reply("ping, echo, trigger, help")
+            case "die" =>
+                if(rest == "   ") exit(0)
         }
     }
 }
 
 main: func {
-    bot := TestBot new("spry", "spry", "a spry little Eye Are See bot", "irc.freenode.net", 6667)
+    bot := TestBot new("spry", "spry", "a spry little Eye Are See bot", "irc.freenode.net", 6667, "!")
     bot run()
 }

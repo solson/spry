@@ -163,6 +163,10 @@ Message: class extends Command {
     message: func -> String {
         params[1]
     }
+
+    inChannel: func -> Bool {
+        reciever() startsWith('#')
+    }
 }
 
 Ping: class extends Command {
