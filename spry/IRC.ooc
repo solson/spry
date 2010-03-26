@@ -20,6 +20,7 @@ IRC: class {
         reader = socket reader()
         writer = socket writer()
         sayTo = null
+        senderPrefix = null
     }
 
     connect: func {
