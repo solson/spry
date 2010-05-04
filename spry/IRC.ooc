@@ -61,27 +61,27 @@ IRC: class {
         onAll(cmd)
         match(cmd command) {
             case "PING" =>
-                onPing(Ping new(cmd))
+                onPing(Ping new(cmd) as Ping)
             case "PONG" =>
-                onPong(Pong new(cmd))
+                onPong(Pong new(cmd) as Pong)
             case "NICK" =>
-                onNick(Nick new(cmd))
+                onNick(Nick new(cmd) as Nick)
             case "PRIVMSG" =>
                 msg := Message new(cmd)
-                checkAddressed(msg)
-                if(msg inChannel()) {
-                    this sayTo = msg channel()
-                    onChannelMessage(msg)
+                checkAddressed(msg as Message)
+                if(msg as Message inChannel()) {
+                    this sayTo = msg as Message channel()
+                    onChannelMessage(msg as Message)
                 } else {
                     this sayTo = msg prefix nick
-                    onPrivateMessage(msg)
+                    onPrivateMessage(msg as Message)
                 }
             case "JOIN" =>
                 joinCmd := Join new(cmd)
-                sayTo = joinCmd channel()
-                onJoin(joinCmd)
+                sayTo = joinCmd as Join channel()
+                onJoin(joinCmd as Join)
             case =>
-                onUnhandled(cmd)
+                onUnhandled(cmd as Command)
         }
     }
 

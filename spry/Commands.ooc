@@ -78,7 +78,7 @@ Command: class {
 
 Nick: class extends Command {
     init: func ~Nick (.irc, nick: String) {
-        params := [nick] as ArrayList<String>
+        params = [nick] as ArrayList<String>
         super(irc, "NICK", null, params)
     }
 
@@ -96,7 +96,7 @@ Nick: class extends Command {
 
 User: class extends Command {
     init: func ~User (.irc, user, realname: String) {
-        params := [user, "*", "*", realname] as ArrayList<String>
+        params = [user, "*", "*", realname] as ArrayList<String>
         super(irc, "USER", null, params)
     }
 
@@ -118,12 +118,12 @@ User: class extends Command {
 
 Join: class extends Command {
     init: func ~Join (.irc, channel: String) {
-        params := [channel] as ArrayList<String>
+        params = [channel] as ArrayList<String>
         super(irc, "JOIN", null, params)
     }
 
     init: func ~JoinMany (.irc, channels: ArrayList<String>) {
-        params := [channels join(',')] as ArrayList<String>
+        params = [channels join(',')] as ArrayList<String>
         super(irc, "JOIN", null, params)
     }
 
@@ -141,7 +141,7 @@ Join: class extends Command {
 
 Message: class extends Command {
     init: func ~Privmsg (.irc, reciever, message: String) {
-        params := [reciever, message] as ArrayList<String>
+        params = [reciever, message] as ArrayList<String>
         super(irc, "PRIVMSG", null, params)
     }
 
@@ -171,7 +171,7 @@ Message: class extends Command {
 
 Ping: class extends Command {
     init: func ~Ping (.irc, server: String) {
-        params := [server] as ArrayList<String>
+        params = [server] as ArrayList<String>
         super(irc, "PING", null, params)
     }
 
@@ -189,7 +189,7 @@ Ping: class extends Command {
 
 Pong: class extends Command {
     init: func ~Pong (.irc, server: String) {
-        params := [server] as ArrayList<String>
+        params = [server] as ArrayList<String>
         super(irc, "PONG", null, params)
     }
 

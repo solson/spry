@@ -2,19 +2,8 @@ import net/StreamSocket
 import spry/[IRC, Commands, Prefix]
 
 TestBot: class extends IRC {
-    init: func ~TestBot (=nick, =user, =realname, =server, =port, =trigger) {
-        socket = StreamSocket new(server, port)
-        reader = socket reader()
-        writer = socket writer()
-        sayTo = null
-        senderPrefix = null
-        addressed = false
-        commandString = false
-    }
-
-    onConnect: func {
-        super onConnect()
-        Join new(this, "#spry,#ooc-lang") send()
+    init: func ~TestBot (.nick, .user, .realname, .server, .port, .trigger) {
+        super(nick, user, realname, server, port, trigger)
     }
 
     onSend: func (cmd: Command) {
@@ -53,6 +42,8 @@ TestBot: class extends IRC {
         rest := commandString[i..-1]
 
         match(cmd) {
+            case "join" =>
+                Join new(this, rest) send()
             case "ping" =>
                 reply("pong")
             case "echo" =>
