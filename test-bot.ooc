@@ -60,6 +60,6 @@ TestBot: class extends IRC {
 }
 
 main: func {
-    bot := TestBot new("spry", "spry", "a spry little Eye Are See bot", "irc.freenode.net", 6667, "!")
+    bot := TestBot new("spry", "spry", "a spry little IRC bot", "irc.ninthbit.net", 6667, "!")
     bot run()
 }
