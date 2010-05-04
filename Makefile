@@ -1,4 +1,4 @@
-OOC?=ooc
+OOC?=rock
 OOC_FLAGS+=-g -noclean -nolines -v -driver=sequence
 
 .PHONY: all clean
