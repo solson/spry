@@ -9,13 +9,6 @@ Command: class {
 
     init: func (=irc, =command, =prefix, =params) {}
 
-    init: func ~copy (cmd: This) {
-        this irc = cmd irc
-        this prefix = cmd prefix
-        this command = cmd command
-        this params = cmd params
-    }
-
     new: static func ~fromString (irc: IRC, line: String) -> This {
         reader := StringReader new(line)
 
@@ -51,6 +44,15 @@ Command: class {
         This new(irc, command, prefix, params)
     }
 
+    init: func ~blank {}
+
+    from: func (cmd: This) {
+        this irc = cmd irc
+        this command = cmd command
+        this prefix = cmd prefix
+        this params = cmd params
+    }
+
     toString: func -> String {
         b := Buffer new()
 
@@ -82,13 +84,6 @@ Nick: class extends Command {
         super(irc, "NICK", null, params)
     }
 
-    init: func ~copy (cmd: Command) {
-        this irc = cmd irc
-        this prefix = cmd prefix
-        this command = cmd command
-        this params = cmd params
-    }
-
     nick: func -> String {
         params[0]
     }
@@ -98,13 +93,6 @@ User: class extends Command {
     init: func ~User (.irc, user, realname: String) {
         params = [user, "*", "*", realname] as ArrayList<String>
         super(irc, "USER", null, params)
-    }
-
-    init: func ~copy (cmd: Command) {
-        this irc = cmd irc
-        this prefix = cmd prefix
-        this command = cmd command
-        this params = cmd params
     }
 
     user: func -> String {
@@ -127,13 +115,6 @@ Join: class extends Command {
         super(irc, "JOIN", null, params)
     }
 
-    init: func ~copy (cmd: Command) {
-        this irc = cmd irc
-        this prefix = cmd prefix
-        this command = cmd command
-        this params = cmd params
-    }
-
     channel: func -> String {
         params[0]
     }
@@ -143,13 +124,6 @@ Message: class extends Command {
     init: func ~Privmsg (.irc, reciever, message: String) {
         params = [reciever, message] as ArrayList<String>
         super(irc, "PRIVMSG", null, params)
-    }
-
-    init: func ~copy (cmd: Command) {
-        this irc = cmd irc
-        this prefix = cmd prefix
-        this command = cmd command
-        this params = cmd params
     }
 
     reciever: func -> String {
@@ -175,13 +149,6 @@ Ping: class extends Command {
         super(irc, "PING", null, params)
     }
 
-    init: func ~copy (cmd: Command) {
-        this irc = cmd irc
-        this prefix = cmd prefix
-        this command = cmd command
-        this params = cmd params
-    }
-
     server: func -> String {
         params[0]
     }
@@ -191,13 +158,6 @@ Pong: class extends Command {
     init: func ~Pong (.irc, server: String) {
         params = [server] as ArrayList<String>
         super(irc, "PONG", null, params)
-    }
-
-    init: func ~copy (cmd: Command) {
-        this irc = cmd irc
-        this prefix = cmd prefix
-        this command = cmd command
-        this params = cmd params
     }
 
     server: func -> String {

@@ -7,4 +7,4 @@ all:
 	${OOC} ${OOC_FLAGS} test-bot.ooc
 
 clean:
-	rm -rf *_tmp test-bot
+	rm -rf *_tmp .libs test-bot
