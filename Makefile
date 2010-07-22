@@ -1,5 +1,5 @@
 OOC?=rock
-OOC_FLAGS+=-g -noclean -nolines -v -driver=sequence
+OOC_FLAGS+=-g -v -clang
 
 .PHONY: all clean
 

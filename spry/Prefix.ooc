@@ -1,18 +1,18 @@
 Prefix: class {
     nick, user, host, full: String
-    isServer: Bool
+    server?: Bool
 
     init: func (=full) {
         i := full indexOf('!')
         if(i == -1) {
-            isServer = true
+            server? = true
             nick = null
             user = null
             host = full
             return
         }
 
-        isServer = false
+        server? = false
         nick = full[0..i]
 
         j := full indexOf('@')

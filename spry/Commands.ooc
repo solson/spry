@@ -2,14 +2,13 @@ import structs/[List, ArrayList], text/[StringReader, Buffer]
 import IRC, Prefix
 
 Command: class {
-    irc: IRC
     command: String
     prefix: Prefix
     params: ArrayList<String>
 
-    init: func (=irc, =command, =prefix, =params) {}
+    init: func (=command, =prefix, =params) {}
 
-    new: static func ~fromString (irc: IRC, line: String) -> This {
+    init: func ~fromString (line: String) {
         reader := StringReader new(line)
 
         prefix: Prefix
@@ -41,22 +40,13 @@ Command: class {
             params add(param)
         }
 
-        This new(irc, command, prefix, params)
-    }
-
-    init: func ~blank {}
-
-    from: func (cmd: This) {
-        this irc = cmd irc
-        this command = cmd command
-        this prefix = cmd prefix
-        this params = cmd params
+        this init(command, prefix, params)
     }
 
     toString: func -> String {
         b := Buffer new()
 
-        if(prefix) {
+        if(prefix != null) {
             b append(':') .append(prefix full) .append(' ')
         }
 
@@ -66,101 +56,11 @@ Command: class {
         for(i in 0..params size()) {
             param := params[i]
             b append(' ')
-            if(i == last) b append(':')
+            if(i == last)
+                b append(':')
             b append(param)
         }
 
-        return b toString()
-    }
-
-    send: func {
-        irc send(this)
-    }
-}
-
-Nick: class extends Command {
-    init: func ~Nick (.irc, nick: String) {
-        params = [nick] as ArrayList<String>
-        super(irc, "NICK", null, params)
-    }
-
-    nick: func -> String {
-        params[0]
-    }
-}
-
-User: class extends Command {
-    init: func ~User (.irc, user, realname: String) {
-        params = [user, "*", "*", realname] as ArrayList<String>
-        super(irc, "USER", null, params)
-    }
-
-    user: func -> String {
-        params[0]
-    }
-
-    realname: func -> String {
-        params[3]
-    }
-}
-
-Join: class extends Command {
-    init: func ~Join (.irc, channel: String) {
-        params = [channel] as ArrayList<String>
-        super(irc, "JOIN", null, params)
-    }
-
-    init: func ~JoinMany (.irc, channels: ArrayList<String>) {
-        params = [channels join(',')] as ArrayList<String>
-        super(irc, "JOIN", null, params)
-    }
-
-    channel: func -> String {
-        params[0]
-    }
-}
-
-Message: class extends Command {
-    init: func ~Privmsg (.irc, reciever, message: String) {
-        params = [reciever, message] as ArrayList<String>
-        super(irc, "PRIVMSG", null, params)
-    }
-
-    reciever: func -> String {
-        params[0]
-    }
-
-    channel: func -> String {
-        params[0]
-    }
-
-    message: func -> String {
-        params[1]
-    }
-
-    inChannel: func -> Bool {
-        reciever() startsWith('#')
-    }
-}
-
-Ping: class extends Command {
-    init: func ~Ping (.irc, server: String) {
-        params = [server] as ArrayList<String>
-        super(irc, "PING", null, params)
-    }
-
-    server: func -> String {
-        params[0]
-    }
-}
-
-Pong: class extends Command {
-    init: func ~Pong (.irc, server: String) {
-        params = [server] as ArrayList<String>
-        super(irc, "PONG", null, params)
-    }
-
-    server: func -> String {
-        params[0]
+        b toString()
     }
 }
