@@ -20,7 +20,7 @@ IRC: class {
     }
 
     on: func (name: String, fn: Func (IRC, Command)) {
-        callbacks[name] = fn
+        callbacks put(name, fn)
     }
 
     runCallback: func (name: String, cmd: Command) {
