@@ -1,5 +1,5 @@
 OOC?=rock
-OOC_FLAGS+=-g -v -clang
+OOC_FLAGS+=-g -v -clang -nolines
 
 .PHONY: all clean
 
