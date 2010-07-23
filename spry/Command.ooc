@@ -8,6 +8,8 @@ Command: class {
 
     init: func (=command, =prefix, =params) {}
 
+    init: func ~withoutPrefix (=command, =params) { prefix = null }
+
     init: func ~fromString (line: String) {
         reader := StringReader new(line)
 

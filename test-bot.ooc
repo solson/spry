@@ -1,7 +1,7 @@
-import spry/[IRC, Commands, Prefix]
+import spry/IRC
 
 main: func {
-    bot := IRC new("spry", "spry", "a spry little IRC bot", "irc.ninthbit.net", 6667)
+    bot := IRC new("spry", "spry", "a spry little IRC bot", "localhost", 6667)
 
     bot on("send", |irc, cmd|
         ">> " print()
@@ -10,6 +10,10 @@ main: func {
 
     bot on("all", |irc, cmd|
         cmd toString() println()
+    )
+
+    bot on("001", |irc, cmd|
+        irc join("#programming")
     )
 
     bot run()

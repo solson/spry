@@ -1,21 +1,21 @@
 import net/StreamSocket, structs/[HashMap, ArrayList]
-import Commands, Prefix
+import Command, Prefix
 
 IRC: class {
-    nick, username, realname, server: String
+    nickname, username, realname, server: String
     port: Int
     socket: StreamSocket
     reader: StreamSocketReader
     writer: StreamSocketWriter
     callbacks := HashMap<String, Func (IRC, Command)> new()
 
-    init: func (=nick, =username, =realname, =server, =port) {
+    init: func (=nickname, =username, =realname, =server, =port) {
         socket = StreamSocket new(server, port)
         reader = socket reader()
         writer = socket writer()
 
-        on("ping", |irc, cmd|
-            irc send(Command new("PONG", null, cmd params))
+        on("PING", |irc, cmd|
+            irc pong(cmd params[0])
         )
     }
 
@@ -30,8 +30,8 @@ IRC: class {
 
     connect: func {
         socket connect()
-        send(Command new("NICK", null, [nick] as ArrayList<String>))
-        send(Command new("USER", null, [username, "0", "*", realname] as ArrayList<String>))
+        nick(nickname)
+        user(username, realname)
     }
 
     run: func {
@@ -57,7 +57,108 @@ IRC: class {
         writer write(cmd toString() + "\r\n")
     }
 
-    say: func (to, msg: String) {
-        send(Command new("PRIVMSG", null, [to, msg] as ArrayList<String>))
+    /*
+     * Connection registration
+     */
+    // pass
+
+    nick: func (nickname: String) {
+        send(Command new("NICK", [nickname] as ArrayList<String>))
     }
+
+    user: func (username, realname: String) {
+        send(Command new("USER", [username, "0", "*", realname] as ArrayList<String>))
+    }
+
+    // oper
+
+    // user mode
+
+    // service
+
+    // quit
+
+    // squit
+    
+    /*
+     * Channel operations
+     */
+    join: func (channel: String) {
+        send(Command new("JOIN", [channel] as ArrayList<String>))
+    }
+
+    // part
+
+    // channel mode
+
+    // topic
+
+    // names
+
+    // list
+
+    // invite
+
+    // kick
+
+    /*
+     * Sending messages
+     */
+    privmsg: func (to, msg: String) {
+        send(Command new("PRIVMSG", [to, msg] as ArrayList<String>))
+    }
+
+    // notice
+
+    /*
+     * Server queries and commands
+     */
+    // motd
+
+    // lusers
+
+    // version
+
+    // stats
+
+    // links
+
+    // time
+
+    // connect
+
+    // trace
+
+    // admin
+
+    // info
+
+    /*
+     * Service queries and commands
+     */
+    // servlist
+
+    // squery
+
+    /*
+     * User based queries
+     */
+    // who
+
+    // whois
+
+    // whowas
+
+    /*
+     * Miscellaneous messages
+     */
+    // kill
+
+    // ping
+    
+    pong: func (server: String) {
+        send(Command new("PONG", [server] as ArrayList<String>))
+    }
+
+    // error
 }
