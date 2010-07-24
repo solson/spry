@@ -7,7 +7,9 @@ IRC: class {
     socket: StreamSocket
     reader: StreamSocketReader
     writer: StreamSocketWriter
-    callbacks := HashMap<String, Func (IRC, Message)> new()
+    callbacks := HashMap<String, ArrayList<Func (IRC, Message)>> new()
+
+    channels := ArrayList<String> new()
 
     init: func (=nickname, =username, =realname, =server, =port) {
         socket = StreamSocket new(server, port)
@@ -17,15 +19,34 @@ IRC: class {
         on("PING", |irc, msg|
             irc pong(msg params[0])
         )
+
+        on("JOIN", |irc, msg|
+            channel := msg params[0]
+            if(msg prefix nick == irc nickname && !irc channels contains(channel)) {
+                irc channels add(channel)
+            }
+        )
+
+        on("PART", |irc, msg|
+            channel := msg params[0]
+            if(msg prefix nick == irc nickname) {
+                irc channels remove(channel)
+            }
+        )
     }
 
     on: func (name: String, fn: Func (IRC, Message)) {
-        callbacks put(name, fn)
+        if(!callbacks contains(name))
+            callbacks put(name, ArrayList<Func (IRC, Message)> new())
+        callbacks get(name) add(fn)
     }
 
     runCallback: func (name: String, msg: Message) {
-        if(callbacks contains(name))
-            callbacks[name](this, msg)
+        if(callbacks contains(name)) {
+            fns: ArrayList<Func (IRC, Message)> = callbacks get(name)
+            for(fn in fns)
+                fn(this, msg)
+        }
     }
 
     connect: func {
