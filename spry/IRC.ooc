@@ -58,9 +58,16 @@ IRC: class {
     }
 
     /*
+     * IRC Messages
+     * Refer to <http://tools.ietf.org/html/rfc2812#section-3>
+     */
+
+    /*
      * Connection registration
      */
-    // pass
+    pass: func (password: String) {
+        send(Command new("PASS", [password] as ArrayList<String>))
+    }
 
     nick: func (nickname: String) {
         send(Command new("NICK", [nickname] as ArrayList<String>))
@@ -70,15 +77,21 @@ IRC: class {
         send(Command new("USER", [username, "0", "*", realname] as ArrayList<String>))
     }
 
-    // oper
+    oper: func (name, password: String) {
+        send(Command new("OPER", [name, password] as ArrayList<String>))
+    }
 
-    // user mode
+    userMode: func (modes: String) {
+        send(Command new("MODE", [this nickname, modes] as ArrayList<String>))
+    }
 
-    // service
+    quit: func ~withoutMessage {
+        send(Command new("QUIT", ArrayList<String> new()))
+    }
 
-    // quit
-
-    // squit
+    quit: func ~withMessage (message: String) {
+        send(Command new("QUIT", [message] as ArrayList<String>))
+    }
     
     /*
      * Channel operations
@@ -87,78 +100,119 @@ IRC: class {
         send(Command new("JOIN", [channel] as ArrayList<String>))
     }
 
-    // part
+    part: func ~withoutMessage (channel: String) {
+        send(Command new("PART", [channel] as ArrayList<String>))
+    }
 
-    // channel mode
+    part: func ~withMessage (channel, message: String) {
+        send(Command new("PART", [channel, message] as ArrayList<String>))
+    }
+    
+    channelMode: func (channel, modes: String) {
+        send(Command new("MODE", [channel, modes] as ArrayList<String>))
+    }
 
-    // topic
+    topic: func ~get (channel: String) {
+        send(Command new("TOPIC", [channel] as ArrayList<String>))
+    }
 
-    // names
+    topic: func ~set (channel, topic: String) {
+        send(Command new("TOPIC", [channel, topic] as ArrayList<String>))
+    }
 
-    // list
+    names: func (channel: String) {
+        send(Command new("NAMES", [channel] as ArrayList<String>))
+    }
 
-    // invite
+    list: func {
+        send(Command new("LIST", ArrayList<String> new()))
+    }
 
-    // kick
+    invite: func (nickname, channel: String) {
+        send(Command new("INVITE", [nickname, channel] as ArrayList<String>))
+    }
+    
+    kick: func ~withoutComment (channel, user: String) {
+        send(Command new("KICK", [channel, user] as ArrayList<String>))
+    }
+    
+    kick: func ~withComment (channel, user, comment: String) {
+        send(Command new("KICK", [channel, user, comment] as ArrayList<String>))
+    }
 
     /*
      * Sending messages
      */
-    privmsg: func (to, msg: String) {
-        send(Command new("PRIVMSG", [to, msg] as ArrayList<String>))
+    privmsg: func (target, text: String) {
+        send(Command new("PRIVMSG", [target, text] as ArrayList<String>))
     }
-
-    // notice
+    
+    notice: func (target, text: String) {
+        send(Command new("NOTICE", [target, text] as ArrayList<String>))
+    }
 
     /*
      * Server queries and commands
      */
-    // motd
+    motd: func {
+        send(Command new("MOTD", ArrayList<String> new()))
+    }
 
-    // lusers
+    lusers: func {
+        send(Command new("LUSERS", ArrayList<String> new()))
+    }
 
-    // version
+    version_: func {
+        send(Command new("VERSION", ArrayList<String> new()))
+    }
 
-    // stats
+    stats: func (query: String) {
+        send(Command new("STATS", [query] as ArrayList<String>))
+    }
 
-    // links
+    links: func {
+        send(Command new("LINKS", ArrayList<String> new()))
+    }
 
-    // time
+    time: func {
+        send(Command new("TIME", ArrayList<String> new()))
+    }
 
-    // connect
+    admin: func {
+        send(Command new("ADMIN", ArrayList<String> new()))
+    }
 
-    // trace
-
-    // admin
-
-    // info
-
-    /*
-     * Service queries and commands
-     */
-    // servlist
-
-    // squery
+    info: func {
+        send(Command new("INFO", ArrayList<String> new()))
+    }
 
     /*
      * User based queries
      */
-    // who
+    who: func (mask: String) {
+        send(Command new("WHO", [mask] as ArrayList<String>))
+    }
 
-    // whois
+    whois: func (mask: String) {
+        send(Command new("WHOIS", [mask] as ArrayList<String>))
+    }
 
-    // whowas
+    whowas: func (nickname: String) {
+        send(Command new("WHOWAS", [nickname] as ArrayList<String>))
+    }
 
     /*
      * Miscellaneous messages
      */
-    // kill
-
-    // ping
+    kill: func (nickname, comment: String) {
+        send(Command new("KILL", [nickname, comment] as ArrayList<String>))
+    }
+    
+    ping: func (server: String) {
+        send(Command new("PING", [server] as ArrayList<String>))
+    }
     
     pong: func (server: String) {
         send(Command new("PONG", [server] as ArrayList<String>))
     }
-
-    // error
 }
