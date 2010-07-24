@@ -1,7 +1,7 @@
 import structs/[List, ArrayList], text/[StringReader, Buffer]
 import IRC, Prefix
 
-Command: class {
+Message: class {
     command: String
     prefix: Prefix
     params: ArrayList<String>
