@@ -2,7 +2,7 @@ import spry/[IRC, Message, Prefix]
 import structs/ArrayList, text/[Buffer, StringTokenizer]
 
 main: func {
-    bot := IRC new("spry", "spry", "a spry little IRC bot", "localhost", 6667)
+    bot := IRC new("spry", "spry", "a spry little IRC bot", "irc.freenode.net", 6667)
 
     bot on("send", |irc, msg|
         ">> " print()
@@ -14,7 +14,7 @@ main: func {
     )
 
     bot on("001", |irc, msg|
-        irc join("#programming")
+        irc join("##botkiteers")
     )
 
     bot on("PRIVMSG", |irc, msg|
