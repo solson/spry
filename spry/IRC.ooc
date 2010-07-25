@@ -33,6 +33,13 @@ IRC: class {
                 irc channels remove(channel)
             }
         )
+
+        on("KICK", |irc, msg|
+            channel := msg params[0]
+            if(msg params[1] == irc nickname) {
+                irc channels remove(channel)
+            }
+        )
     }
 
     on: func (name: String, fn: Func (IRC, Message)) {
