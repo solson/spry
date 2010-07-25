@@ -22,7 +22,7 @@ IRC: class {
 
         on("JOIN", |irc, msg|
             channel := msg params[0]
-            if(msg prefix nick == irc nickname && !irc channels contains(channel)) {
+            if(msg prefix nick == irc nickname && !irc channels contains?(channel)) {
                 irc channels add(channel)
             }
         )
@@ -43,13 +43,13 @@ IRC: class {
     }
 
     on: func (name: String, fn: Func (IRC, Message)) {
-        if(!callbacks contains(name))
+        if(!callbacks contains?(name))
             callbacks put(name, ArrayList<Func (IRC, Message)> new())
         callbacks get(name) add(fn)
     }
 
     runCallback: func (name: String, msg: Message) {
-        if(callbacks contains(name)) {
+        if(callbacks contains?(name)) {
             fns: ArrayList<Func (IRC, Message)> = callbacks get(name)
             for(fn in fns)
                 fn(this, msg)
@@ -65,7 +65,7 @@ IRC: class {
     run: func {
         connect()
         while(true) {
-            if(reader hasNext()) {
+            if(reader hasNext?()) {
                 line := reader readLine()
                 handleLine(line)
             }

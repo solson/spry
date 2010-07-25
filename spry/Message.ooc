@@ -14,7 +14,7 @@ Message: class {
         reader := StringReader new(line)
 
         // If the line begins with a colon it has a prefix.
-        if(line startsWith(':')) {
+        if(line startsWith?(':')) {
             // Skip the colon.
             reader skip(1)
             // Everything up until the next space is the prefix.
@@ -28,7 +28,7 @@ Message: class {
 
         this params = ArrayList<String> new()
 
-        while(reader hasNext()) {
+        while(reader hasNext?()) {
             param: String
 
             // A param beginning with a colon extends to the end of

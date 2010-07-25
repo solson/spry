@@ -14,12 +14,12 @@ main: func {
     )
 
     bot on("001", |irc, msg|
-        irc join("##botkiteers")
+        irc join("##botkiteers,#ooc-lang")
     )
 
     bot on("PRIVMSG", |irc, msg|
         target := msg params[0]
-        if(target startsWith('#'))
+        if(target startsWith?('#'))
             irc runCallback("channel message", msg)
         else
             irc runCallback("private message", msg)
@@ -27,7 +27,7 @@ main: func {
 
     bot on("channel message", |irc, msg|
         channel := msg params[0]
-        if(msg params[1] startsWith('!')) {
+        if(msg params[1] startsWith?('!')) {
             words := msg params[1][1..-1] split(' ')
             first := words nextToken()
             match first {
@@ -40,7 +40,7 @@ main: func {
                     irc privmsg(channel, msg prefix nick + ": pong")
                 case "join" =>
                     chan := words nextToken()
-                    if(irc channels contains(chan)) {
+                    if(irc channels contains?(chan)) {
                         irc privmsg(channel, msg prefix nick + ": I'm already in " + chan + ".")
                     } else {
                         irc join(chan)
@@ -48,7 +48,7 @@ main: func {
                     }
                 case "part" =>
                     chan := words nextToken()
-                    if(irc channels contains(chan)) {
+                    if(irc channels contains?(chan)) {
                         irc part(chan)
                         irc privmsg(channel, msg prefix nick + ": Consider it done.")
                     } else {
