@@ -1,8 +1,8 @@
 import spry/[IRC, Message, Prefix]
-import structs/ArrayList, text/[Buffer, StringTokenizer]
+import structs/ArrayList, text/StringTokenizer
 
 main: func {
-    bot := IRC new("spry", "spry", "a spry little IRC bot", "irc.freenode.net", 6667)
+    bot := IRC new("spry", "spry", "a spry little IRC bot", "localhost", 6667)
 
     bot on("send", |irc, msg|
         ">> " print()
@@ -14,7 +14,7 @@ main: func {
     )
 
     bot on("001", |irc, msg|
-        irc join("##botkiteers,#ooc-lang")
+        irc join("#spry")
     )
 
     bot on("PRIVMSG", |irc, msg|
@@ -29,7 +29,7 @@ main: func {
         channel := msg params[0]
         if(msg params[1] startsWith?('!')) {
             words := msg params[1][1..-1] split(' ')
-            first := words nextToken()
+            first := words[0]
             match first {
                 case "channels" =>
                     buf := Buffer new()
@@ -39,7 +39,7 @@ main: func {
                 case "ping" =>
                     irc privmsg(channel, msg prefix nick + ": pong")
                 case "join" =>
-                    chan := words nextToken()
+                    chan := words[1]
                     if(irc channels contains?(chan)) {
                         irc privmsg(channel, msg prefix nick + ": I'm already in " + chan + ".")
                     } else {
@@ -47,7 +47,7 @@ main: func {
                         irc privmsg(channel, msg prefix nick + ": Consider it done.")
                     }
                 case "part" =>
-                    chan := words nextToken()
+                    chan := words[1]
                     if(irc channels contains?(chan)) {
                         irc part(chan)
                         irc privmsg(channel, msg prefix nick + ": Consider it done.")

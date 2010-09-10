@@ -1,4 +1,4 @@
-import structs/[List, ArrayList], text/[StringReader, Buffer]
+import structs/[List, ArrayList], io/StringReader
 import IRC, Prefix
 
 Message: class {
@@ -59,7 +59,7 @@ Message: class {
         b append(command)
 
         last := params lastIndex()
-        for(i in 0..params size()) {
+        for(i in 0..params size) {
             param := params[i]
             b append(' ')
             if(i == last)
