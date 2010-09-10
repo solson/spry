@@ -1,0 +1,5 @@
+Name: spry
+Version: vcs
+Origin: git://github.com/tsion/spry.git
+Description: Spry IRC Client Library
+SourcePath: .
