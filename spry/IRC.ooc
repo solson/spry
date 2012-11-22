@@ -1,18 +1,18 @@
-import net/StreamSocket, structs/[HashMap, ArrayList]
+import net/TCPSocket, structs/[HashMap, ArrayList]
 import Message, Prefix
 
 IRC: class {
     nickname, username, realname, server: String
     port: Int
-    socket: StreamSocket
-    reader: StreamSocketReader
-    writer: StreamSocketWriter
+    socket: TCPSocket
+    reader: TCPSocketReader
+    writer: TCPSocketWriter
     callbacks := HashMap<String, ArrayList<Func (IRC, Message)>> new()
 
     channels := ArrayList<String> new()
 
     init: func (=nickname, =username, =realname, =server, =port) {
-        socket = StreamSocket new(server, port)
+        socket = TCPSocket new(server, port)
         reader = socket reader()
         writer = socket writer()
 
